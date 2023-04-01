@@ -3,6 +3,7 @@ package ca.mcmaster.island.Lakes;
 import java.awt.Color;
 import ca.mcmaster.cas.se2aa4.a2.io.Structs;
 import ca.mcmaster.cas.se2aa4.a2.io.Structs.*;
+import ca.mcmaster.island.neighborCheck;
 import ca.mcmaster.island.Tiles.lakeTile;
 import ca.mcmaster.island.Tiles.landTile;
 import ca.mcmaster.island.Tiles.oceanTile;
@@ -52,8 +53,17 @@ public class LakeGen {
             }while (polygonColor.isPresent() && polygonColor.get().equals(oceanColor));
 
             neighbors = p.getNeighborIdxsList();
-            List<Structs.Polygon> lakeNeighborList = markLake(neighbors, m);
-
+            List<Polygon> polygons = m.getPolygonsList();
+            List<Integer> filteredNeighbors = new ArrayList<>();
+            for (Integer neighborIdx : neighbors) {
+                Structs.Polygon neighbor = polygons.get(neighborIdx);
+                Optional<Color> neighborColor = colorProperty.extract(neighbor.getPropertiesList());
+                if (neighborColor.isPresent() && !neighborColor.get().equals(oceanColor)) {
+                    filteredNeighbors.add(neighborIdx);
+                }
+            }
+            List<Structs.Polygon> lakeNeighborList = markLake(filteredNeighbors, m);
+            
             for (Structs.Polygon aP : lakeNeighborList) {
                 lakeNeighbor.add(aP);
             }
@@ -67,13 +77,14 @@ public class LakeGen {
         ColorProperty colorProperty = new ColorProperty();
         String oceanColorString = new oceanTile().getColor().getValue();
         Color oceanColor = colorProperty.toColor(oceanColorString);
+        neighborCheck neighborCheck = new neighborCheck();
         List<Structs.Polygon> poly = new ArrayList<>();
 
 
         for (Integer i : neighbors){
             Structs.Polygon p = mesh.getPolygons(i.intValue());
             Optional<Color> polygonColor = colorProperty.extract(p.getPropertiesList());
-            if (polygonColor.isPresent() && !polygonColor.get().equals(oceanColor)){
+            if (polygonColor.isPresent() && !polygonColor.get().equals(oceanColor) && !neighborCheck.checkNeighbors(p, mesh, new oceanTile())){
                 poly.add(p);
             }
         }
