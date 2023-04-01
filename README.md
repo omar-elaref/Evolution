@@ -78,7 +78,7 @@ Called after java -jar island/island.jar:
     input -altitude sets the type of altitude the user wants (for example canyon, volcano)
 
   Rivers:
-    input -numOfRiver sets the number of rivers
+    input -numOfRivers sets the number of rivers
 
   Lakes:
     input -numOfLakes sets the number of lakes

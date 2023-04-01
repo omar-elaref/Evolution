@@ -35,6 +35,10 @@ public class MakeRiver {
 
     public Structs.Mesh RiverGen(Structs.Mesh m, int numberOfRivers) {
 
+        if(numberOfRivers == 0){
+            return m;
+        }
+
         SegmentElevation seg = new SegmentElevation();
         Structs.Mesh newMesh = seg.segmentElevationBuilder(m);
     
