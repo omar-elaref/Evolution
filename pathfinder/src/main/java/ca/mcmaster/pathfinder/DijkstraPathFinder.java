@@ -43,23 +43,27 @@ public class DijkstraPathFinder implements PathFinder {
 
             // Update the distances of the neighboring nodes
             for (Edge edge : graph.getEdges()) {
-                if (edge.getSource() == current) {
-                    Node neighbor = edge.getDestination();
-                    double newDistance = distances.get(current) + getEdgeWeight(edge);
-                    if (newDistance < distances.get(neighbor)) {
-                        distances.put(neighbor, newDistance);
-                        previousEdges.put(neighbor, edge);
+                if (edge.getSource() == current || edge.getDestination() == current) {
+                    Node neighbor = edge.getSource() == current ? edge.getDestination() : edge.getSource();
+                    if (!visited.contains(neighbor)){
+                        double newDistance = distances.get(current) + getEdgeWeight(edge);
+                        if (newDistance < distances.get(neighbor)) {
+                            distances.put(neighbor, newDistance);
+                            previousEdges.put(neighbor, edge);
+                        }
                     }
                 }
             }
         }
+        
 
         // Reconstruct the shortest path
         List<Edge> path = new ArrayList<>();
-        Edge edge = previousEdges.get(graph.getNode(destinationId));
-        while (edge != null) {
+        Node currentNode = graph.getNode(destinationId);
+        while (currentNode != null && currentNode.getId() != sourceId) {
+            Edge edge = previousEdges.get(currentNode);
             path.add(0, edge);
-            edge = previousEdges.get(edge.getSource());
+            currentNode = edge.getSource() == currentNode ? edge.getDestination() : edge.getSource();
         }
 
         return path;

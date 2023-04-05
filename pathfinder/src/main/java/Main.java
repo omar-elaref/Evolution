@@ -5,7 +5,9 @@ import ca.mcmaster.pathfinder.Builder;
 import ca.mcmaster.pathfinder.DijkstraPathFinder;
 import ca.mcmaster.pathfinder.Edge;
 import ca.mcmaster.pathfinder.Graph;
+import ca.mcmaster.pathfinder.Node;
 import ca.mcmaster.pathfinder.PathFinder;
+import ca.mcmaster.pathfinder.SimpleAttribute;
 
 public class Main {
     public static void main(String[] args) {

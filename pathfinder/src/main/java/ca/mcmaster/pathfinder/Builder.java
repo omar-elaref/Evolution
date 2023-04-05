@@ -51,7 +51,6 @@ public class Builder {
             this.addNode(i);
             this.addAttribute(i, new SimpleAttribute("name", "Node " + i));
         }
-        System.out.println("Size" + this.graph.getNodes().get(numNodes-1).getId());
 
         // Add edges
         Set<String> addedEdges = new HashSet<>();
@@ -81,7 +80,7 @@ public class Builder {
         }
         Random random = new Random();
         for (Edge e : graph.getEdges()){
-            int rand2 = random.nextInt(12);
+            int rand2 = random.nextInt(12) + 1;
             e.addAttribute(new SimpleAttribute("name", "Edge " + e.getId()));
             e.addAttribute(new SimpleAttribute("weight", rand2));
         }

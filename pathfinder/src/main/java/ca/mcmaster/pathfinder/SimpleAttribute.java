@@ -1,6 +1,6 @@
 package ca.mcmaster.pathfinder;
 
-class SimpleAttribute implements Attribute {
+public class SimpleAttribute implements Attribute {
     private String name;
     private Object value;
 
