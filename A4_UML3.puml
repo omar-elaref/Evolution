@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+interface PathFinder {
+
++ findPath(Graph graph, int sourceId, int destinationId): List<Edge>
+
+}
+
+class DijkstraPathFinder{
+
++ findPath(Graph graph, int sourceId, int destinationId): List<Edge>
+- getEdgeWeight(Edge edge): int
+
+}
+
+PathFinder <|.. DijkstraPathFinder
+
+@enduml

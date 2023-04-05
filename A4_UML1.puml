@@ -1,0 +1,75 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+class Node{
+
+- id: int
++ attributeName: String
++ attribute: Object
+- attributes: Map<String, Object>
+
++ Node(int id)
++ getId(int id): int
++ addAttribute(Attribute attribute): void
++ getAttribute(String name): Object
++ getAttributes(): Map<String, Object
+
+}
+
+class Edge{
+- id: int
+- source: Node
+- destination: Node
+- attributes: Map<String, Object>
+
++ Edge(int id, Node source, Node destination)
++ getId(): int 
++ getSource(): Node
++ getDestination(): Node 
++ addAttribute(Attribute attribute): void
++ getAttribute(String name): Object
++ getAttributes(): Map<String, Object>
+
+}
+
+class Graph{
+- nodes: Map<Integer, Node>
+- edges: Map<Integer, Edge>
+
++ Graph()
++ addNode(Node node): void
++ getNode(int id): Node
++ addEdge(Edge edge): void
++ getEdge(int id): Edge
++ getNodes(): List<Node>
++ getEdges(): List<Edge>
+
+}
+
+class Builder{
+- graph: Graph
+
++ Builder()
++ addNode(int id): Builder
++ addAttribute(int nodeId, Attribute attribute): Node
++ addAttributeToAllNodes(String name, Object value): Graph
++ addEdge(int id, int sourceId, int destinationId): Builder
++ build(): Graph
++ buildAll(int numNodes, int numEdges): Graph
+
+
+}
+
+interface Attribute {
+
++ getName(): String 
++ getValue(): Object
+
+}
+
+Builder <|-- Graph
+Graph <.. Node
+Graph <.. Edge
+Node <.. Attribute
+Edge <.. Attribute
+
+@enduml

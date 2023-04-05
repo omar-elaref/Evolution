@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+interface Attribute {
+
++ getName(): String 
++ getValue(): Object
+
+}
+
+class SimpleAttribute{
+
+- name: String
+- value: Object
+
++ SimpleAttribute(String name, Objet value)
++ getName(): String
++ getValue(): Object
+
+}
+
+Attribute <|.. SimpleAttribute
+
+@enduml
