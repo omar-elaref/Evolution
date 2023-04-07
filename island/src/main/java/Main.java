@@ -5,6 +5,7 @@ import ca.mcmaster.island.Elevation.Canyon;
 import ca.mcmaster.island.Elevation.RandomElevation;
 import ca.mcmaster.island.Elevation.Volcano;
 import ca.mcmaster.island.Elevation.elevation;
+import ca.mcmaster.island.PathFinder.CityPicker;
 import ca.mcmaster.island.Rivers.MakeRiver;
 import ca.mcmaster.island.Rivers.RiverGen;
 import ca.mcmaster.island.shapes.*;
@@ -92,6 +93,9 @@ public class Main {
 
                 break;
         }
+
+        CityPicker pick = new CityPicker();
+        pick.middleCentroid(aMesh);
         
         new MeshFactory().write(exported, config.output());
         
