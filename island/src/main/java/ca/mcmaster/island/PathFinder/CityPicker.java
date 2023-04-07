@@ -14,7 +14,7 @@ import java.awt.Color;
 
 public class CityPicker {
     
-    public Structs.Polygon picker(Structs.Mesh m){
+    public int picker(Structs.Mesh m){
 
         Random random = new Random();
         int rand;
@@ -35,11 +35,11 @@ public class CityPicker {
             
         }while (polygonColor.isPresent() && polygonColor.get().equals(oceanColor) || polygonColor.get().equals(lakeColor));
 
-        return p;
+        return p.getCentroidIdx();
 
     }
 
-    public Structs.Polygon middleCentroid(Structs.Mesh m){
+    public int middleCentroid(Structs.Mesh m){
         MeshSize meshSize = new MeshSize(m);
         distance dis = new distance();
         double distanceOfV = 1000;
@@ -53,7 +53,7 @@ public class CityPicker {
                 poly = p;
             }
         }
-        return poly;
+        return poly.getCentroidIdx();
     }
 
 
