@@ -33,7 +33,7 @@ public class CityPicker {
             p = m.getPolygons(rand);
             polygonColor = colorProperty.extract(p.getPropertiesList());
             
-        }while (polygonColor.isPresent() && polygonColor.get().equals(oceanColor) || polygonColor.get().equals(lakeColor));
+        }while (polygonColor.isPresent() && (polygonColor.get().equals(oceanColor) || polygonColor.get().equals(lakeColor)));
 
         return p.getCentroidIdx();
 

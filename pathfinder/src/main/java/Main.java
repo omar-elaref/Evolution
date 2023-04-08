@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -18,21 +19,18 @@ public class Main {
             throw new IllegalArgumentException("Number of edges are too low");
         }
 
-        Builder builder = new Builder();        
+        Builder builder = new Builder();   
+        List<Node> nodes = new ArrayList<>();
+        for (int i = 1; i <= numNodes; i++) {
+            nodes.add(new Node(i));
+        }    
 
-        Graph graph = builder.buildAll(numNodes,numEdges);
-/* 
-        for (Node n : graph.getNodes()){
-            System.out.println(n.getId());
-            System.out.println(n.getAttributes());
+        Graph graph = builder.starBuilder(nodes);
+        for (Edge e : graph.getEdges()){
+            System.out.println(e.getSource().getId() + " " + e.getDestination().getId());
         }
-*/
-        PathFinder shortest = new DijkstraPathFinder();
+ 
         
-        List<Edge> shorter = shortest.findPath(graph, 1, 6);
-        for (Edge e2 : shorter){
-            System.out.println(e2.getSource().getId() + " " + e2.getDestination().getId());
-        }
           
     }
 }

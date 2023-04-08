@@ -1,6 +1,7 @@
 package ca.mcmaster.pathfinder;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -85,6 +86,26 @@ public class Builder {
             e.addAttribute(new SimpleAttribute("weight", rand2));
         }
 
+        return this.graph;
+    }
+
+    public Graph starBuilder(List<Node> nodes) {
+        // Add the central node
+        this.graph.addNode(nodes.get(0));
+    
+        for(int j = 1; j < nodes.size(); j++){
+            this.graph.addNode(nodes.get(j));
+        }
+    
+        // Connect the central node to all other nodes
+        
+        for (int i = 1; i < nodes.size(); i++) {
+            Edge e = new Edge(i, nodes.get(0), nodes.get(i));
+            e.addAttribute(new SimpleAttribute("id", e.getId()));
+            this.graph.addEdge(e);
+            
+        }
+    
         return this.graph;
     }
 
