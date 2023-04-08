@@ -7,6 +7,7 @@ import ca.mcmaster.cas.se2aa4.a2.io.Structs.Vertex;
 import ca.mcmaster.cas.se2aa4.a2.visualizer.renderer.properties.ColorProperty;
 import ca.mcmaster.cas.se2aa4.a2.visualizer.renderer.properties.NumOfRiversProperty;
 import ca.mcmaster.cas.se2aa4.a2.visualizer.renderer.properties.riverProperty;
+import ca.mcmaster.cas.se2aa4.a2.visualizer.renderer.properties.roadProperty;
 
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -32,7 +33,25 @@ public class GraphicRenderer implements Renderer {
         canvas.setStroke(stroke);
         drawPolygons(aMesh, canvas);
         riverSegments(aMesh, canvas);
+        roads(aMesh, canvas);
+
         
+    }
+
+    private void roads(Mesh m, Graphics2D canvas){
+        roadProperty ifRoad = new roadProperty();
+
+        Color road = new Color(255,255,255);
+
+        for (Structs.Segment ss : m.getSegmentsList()) {
+            if(ifRoad.extract(ss.getPropertiesList()).isPresent()){
+                if(ifRoad.extract(ss.getPropertiesList()).get().equals("road")){
+                    int thickness = 1;
+                    drawSegment(ss, m, canvas, road, thickness);
+                }
+            }
+        }
+
     }
     
     

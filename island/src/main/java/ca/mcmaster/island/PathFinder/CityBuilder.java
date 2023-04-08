@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 import ca.mcmaster.cas.se2aa4.a2.io.Structs;
+import ca.mcmaster.cas.se2aa4.a2.io.Structs.Property;
+import ca.mcmaster.cas.se2aa4.a2.io.Structs.Segment;
 import ca.mcmaster.pathfinder.Builder;
 import ca.mcmaster.pathfinder.Edge;
 import ca.mcmaster.pathfinder.Graph;
@@ -27,15 +29,15 @@ public class CityBuilder {
         return cities;
     }
 
-    public List<Structs.Vertex> citiesVertices(Structs.Mesh m, List<Integer> cities){
+    
+    
+    public List<Node> nodeBuilder(List<Integer> cities, Structs.Mesh m){
+
         List<Structs.Vertex> citiesVert = new ArrayList<>();
         for(int i : cities){
             citiesVert.add(m.getVertices(i));
         }
-        return citiesVert;
-    }
-    
-    public List<Node> nodeBuilder(List<Structs.Vertex> citiesVert){
+
         List<Node> nodesList = new ArrayList<>();    
         Random rand = new Random();    
         
@@ -43,12 +45,14 @@ public class CityBuilder {
         central.addAttribute(new SimpleAttribute("type", "central"));
         central.addAttribute(new SimpleAttribute("vertex", citiesVert.get(0)));
         central.addAttribute(new SimpleAttribute("CitySize", CitySize.CAPITAL_CITY));
+        central.addAttribute(new SimpleAttribute("index", cities.get(0)));
         nodesList.add(central);
 
         for(int i = 1; i < citiesVert.size(); i++){
             Node node = new Node(i + 1);
             node.addAttribute(new SimpleAttribute("type", "notCentral"));
             node.addAttribute(new SimpleAttribute("vertex", citiesVert.get(i)));
+            node.addAttribute(new SimpleAttribute("index", cities.get(i)));
 
             CitySize size;
             do {
@@ -63,10 +67,33 @@ public class CityBuilder {
         return nodesList;
     }
 
-    public void starBuilding(Structs.Mesh m, int numCities){
-        List<Node> nodes = nodeBuilder(citiesVertices(m, cities(m, numCities)));
+    public Graph starBuilding(Structs.Mesh m, int numCities){
+        List<Node> nodes = nodeBuilder(cities(m, numCities), m);
         Builder builder = new Builder();
         Graph graph = builder.starBuilder(nodes);
+        
+        return graph;
+    }
+
+    public Structs.Mesh buildsmth(Structs.Mesh m, Graph graph){
+
+        List<Structs.Segment> segments = new ArrayList<>();
+        
+        for(Edge e : graph.getEdges()){
+            Property prop = Property.newBuilder().setKey("road").setValue("road").build();
+            Structs.Segment seg = Segment.newBuilder().setV1Idx((int) e.getSource().getAttribute("index")).setV2Idx((int) e.getDestination().getAttribute("index")).addProperties(prop).build();
+            segments.add(seg);
+        }
+
+        List<Structs.Segment> segm = new ArrayList<>(m.getSegmentsList());
+
+        // Add the new segments
+        segm.addAll(segments);
+
+    
+
+        Structs.Mesh newMesh = Structs.Mesh.newBuilder(m).clearSegments().addAllSegments(segm).build();
+        return newMesh;
         
     }
 

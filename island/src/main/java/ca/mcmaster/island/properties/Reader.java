@@ -10,14 +10,14 @@ public class Reader {
 
     private Map<String, String> contents;
 
-    Reader(List<Structs.Property> props) {
+    public Reader(List<Structs.Property> props) {
         this.contents = new HashMap<>();
         for (Structs.Property p : props) {
             this.contents.put(p.getKey(), p.getValue());
         }
     }
 
-    String get(String key) {
+    public String get(String key) {
         return this.contents.get(key);
     }
 

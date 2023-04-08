@@ -100,8 +100,9 @@ public class Main {
         CityBuilder cit = new CityBuilder();
         cit.cities(exported, 3);
         cit.starBuilding(exported, 3);
+        Structs.Mesh mm = cit.buildsmth(exported, cit.starBuilding(exported, 8));
         
-        new MeshFactory().write(exported, config.output());
+        new MeshFactory().write(mm, config.output());
         
     }
 }
