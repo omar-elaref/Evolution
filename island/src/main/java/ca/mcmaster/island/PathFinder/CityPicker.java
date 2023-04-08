@@ -45,14 +45,28 @@ public class CityPicker {
         double distanceOfV = 1000;
         Structs.Polygon poly = m.getPolygons(0);
 
+        Optional<Color> polygonColor;
+        ColorProperty colorProperty = new ColorProperty();
+        String oceanColorString = new oceanTile().getColor().getValue();
+        Color oceanColor = colorProperty.toColor(oceanColorString);
+        String lakeColorString = new lakeTile().getColor().getValue();
+        Color lakeColor = colorProperty.toColor(lakeColorString);
+
+
         for (Structs.Polygon p : m.getPolygonsList()){
-            Structs.Segment s = m.getSegments(p.getSegmentIdxs(0));
-            Structs.Vertex v = m.getVertices(s.getV1Idx());
-            if (dis.centerDistance(v, meshSize.getMaxX()/2, meshSize.getMaxY()/2) < distanceOfV){
-                distanceOfV = dis.centerDistance(v, meshSize.getMaxX()/2, meshSize.getMaxY()/2);
-                poly = p;
+
+            polygonColor = colorProperty.extract(p.getPropertiesList());
+
+            if(polygonColor.isPresent() && !(polygonColor.get().equals(oceanColor) || polygonColor.get().equals(lakeColor))){
+                Structs.Segment s = m.getSegments(p.getSegmentIdxs(0));
+                Structs.Vertex v = m.getVertices(s.getV1Idx());
+                if (dis.centerDistance(v, meshSize.getMaxX()/2, meshSize.getMaxY()/2) < distanceOfV){
+                    distanceOfV = dis.centerDistance(v, meshSize.getMaxX()/2, meshSize.getMaxY()/2);
+                    poly = p;
+                }
             }
         }
+
         return poly.getCentroidIdx();
     }
 
