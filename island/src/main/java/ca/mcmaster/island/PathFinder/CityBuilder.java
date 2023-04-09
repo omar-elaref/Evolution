@@ -16,6 +16,7 @@ import ca.mcmaster.island.Tiles.lakeTile;
 import ca.mcmaster.island.Tiles.oceanTile;
 import ca.mcmaster.island.properties.ColorProperty;
 import ca.mcmaster.pathfinder.Builder;
+import ca.mcmaster.pathfinder.DijkstraPathFinder;
 import ca.mcmaster.pathfinder.Edge;
 import ca.mcmaster.pathfinder.Graph;
 import ca.mcmaster.pathfinder.Node;
@@ -38,40 +39,121 @@ public class CityBuilder {
         return cities;
     }
 
-    public Structs.Mesh middleCity(Structs.Mesh m){
+    private List<Node> addingNodeAtt(List<Integer> cities, Structs.Mesh m){
+        Adapter adapter = new Adapter(m);
+        Graph graph = adapter.graph;
+        List<Node> nodeList = new ArrayList<>();
+        Random rand = new Random();    
+
         
+        Node central = graph.getNode(0);
+        central.addAttribute(new SimpleAttribute("type", true));
+        central.addAttribute(new SimpleAttribute("CitySize", CitySize.CAPITAL_CITY));
+        nodeList.add(central);
 
-        Optional<Color> polygonColor;
-        ColorProperty colorProperty = new ColorProperty();
-        String oceanColorString = new oceanTile().getColor().getValue();
-        Color oceanColor = colorProperty.toColor(oceanColorString);
-        String lakeColorString = new lakeTile().getColor().getValue();
-        Color lakeColor = colorProperty.toColor(lakeColorString);
-        List<Structs.Polygon> poly = new ArrayList<>();
+        for(int i = 1; i < cities.size(); i++){
+            Node node = graph.getNode(i);
+            node.addAttribute(new SimpleAttribute("type", false));
 
+            CitySize size;
+            do {
+                size = CitySize.values()[rand.nextInt(CitySize.values().length)];
+            } while (size == CitySize.CAPITAL_CITY);
 
-        MeshSize size = new MeshSize(m);
-        double radius = size.getMaxY()/15;
-        for(Structs.Polygon p : m.getPolygonsList()){
-            distance dis = new distance();
-            if(dis.centerDistance(m.getVertices(p.getCentroidIdx()), size.getMaxX()/2, size.getMaxY()/2) < radius){
-                polygonColor = colorProperty.extract(p.getPropertiesList());
-                if(polygonColor.isPresent() && !(polygonColor.get().equals(oceanColor) || polygonColor.get().equals(lakeColor))){
-                    Property prop = Property.newBuilder().setKey("rgb_color").setValue("43,45,47").build();
-                    Structs.Polygon newPolygon = Structs.Polygon.newBuilder(p).addProperties(prop).build();
-                    poly.add(newPolygon);
-                }else{
-                    poly.add(p);
-                }
-            }else{
-                poly.add(p);
-            }
+            node.addAttribute(new SimpleAttribute("CitySize", size));
+
+            nodeList.add(node);
         }
-        Structs.Mesh newMesh = Structs.Mesh.newBuilder(m).clearPolygons().addAllPolygons(poly).build();
-        return newMesh;
+        this.bigGraph = graph;
+        return nodeList;
     }
 
+    private List<Edge> pathFinderList(List<Integer> cities, Structs.Mesh m){
+        Adapter adapter = new Adapter(m);
+        this.bigGraph = adapter.graph;
+        List<Edge> edges = new ArrayList<>();
+        
+
+        for(int i = 1; i < cities.size(); i++){
+            List<Edge> e = new DijkstraPathFinder().findPath(
+                bigGraph,
+                bigGraph.getNode(neighborPoly(m, cities.get(0))).getId(),
+                bigGraph.getNode(neighborPoly(m, cities.get(i))).getId()
+            );            
+            edges.addAll(e);
+        }
+        
+
+        return edges;
+
+    }
+
+      
+
+    private int neighborPoly(Structs.Mesh m, int num){
+        for (int i = 0; i < m.getPolygonsCount(); i++){
+            Structs.Polygon p = m.getPolygons(i);
+            if(p.getCentroidIdx() == num){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
+    public void g(Structs.Mesh m){
+        Adapter adapter = new Adapter(m);
+        this.bigGraph = adapter.graph;
+
+        for(Edge e : bigGraph.getEdges()){
+            System.out.println(e.getAttributes() + " " + e.getSource().getId() + " " + e.getDestination().getId() + " " + m.getPolygons(e.getSource().getId()).getCentroidIdx());
+        }
+    }
+
+    public Structs.Mesh buildsmth(Structs.Mesh m, int numCities){
+        
+        List<Edge> edges = pathFinderList(cities(m, numCities), m);
+
+        List<Structs.Segment> segments = new ArrayList<>();
+        
+        for(Edge e : edges){
+            Property prop = Property.newBuilder().setKey("road").setValue("road").build();
+            Structs.Segment seg = Segment.newBuilder().setV1Idx(m.getPolygons(e.getSource().getId()).getCentroidIdx()).setV2Idx(m.getPolygons(e.getDestination().getId()).getCentroidIdx()).addProperties(prop).build();
+            segments.add(seg);
+        }
+
+        List<Structs.Segment> segm = new ArrayList<>(m.getSegmentsList());
+
+        // Add the new segments
+        segm.addAll(segments);
+
     
+
+        Structs.Mesh newMesh = Structs.Mesh.newBuilder(m).clearSegments().addAllSegments(segm).build();
+        return newMesh;
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     public List<Node> nodeBuilder(List<Integer> cities, Structs.Mesh m){
 
@@ -113,31 +195,9 @@ public class CityBuilder {
         List<Node> nodes = nodeBuilder(cities(m, numCities), m);
         Builder builder = new Builder();
         Graph graph = builder.starBuilder(nodes);
-        this.bigGraph = graph;
         return graph;
     }
 
-    public Structs.Mesh buildsmth(Structs.Mesh m, Graph graph){
-
-        List<Structs.Segment> segments = new ArrayList<>();
-        
-        for(Edge e : graph.getEdges()){
-            Property prop = Property.newBuilder().setKey("road").setValue("road").build();
-            Structs.Segment seg = Segment.newBuilder().setV1Idx((int) e.getSource().getAttribute("index")).setV2Idx((int) e.getDestination().getAttribute("index")).addProperties(prop).build();
-            segments.add(seg);
-        }
-
-        List<Structs.Segment> segm = new ArrayList<>(m.getSegmentsList());
-
-        // Add the new segments
-        segm.addAll(segments);
-
     
-
-        Structs.Mesh newMesh = Structs.Mesh.newBuilder(m).clearSegments().addAllSegments(segm).build();
-        return newMesh;
-        
-    }
-
 
 }

@@ -5,11 +5,13 @@ import ca.mcmaster.island.Elevation.Canyon;
 import ca.mcmaster.island.Elevation.RandomElevation;
 import ca.mcmaster.island.Elevation.Volcano;
 import ca.mcmaster.island.Elevation.elevation;
+import ca.mcmaster.island.PathFinder.Adapter;
 import ca.mcmaster.island.PathFinder.CityBuilder;
 import ca.mcmaster.island.PathFinder.CityPicker;
 import ca.mcmaster.island.Rivers.MakeRiver;
 import ca.mcmaster.island.Rivers.RiverGen;
 import ca.mcmaster.island.shapes.*;
+import ca.mcmaster.pathfinder.Graph;
 import ca.mcmaster.cas.se2aa4.a2.io.*;
 
 import java.io.IOException;
@@ -95,14 +97,14 @@ public class Main {
                 break;
         }
 
-        CityPicker pick = new CityPicker();
-        pick.middleCentroid(aMesh);
+       
         CityBuilder cit = new CityBuilder();
-        cit.cities(exported, 3);
-        cit.starBuilding(exported, 3);
-        Structs.Mesh mm = cit.buildsmth(exported, cit.starBuilding(exported, 8));
-        Structs.Mesh mmm = cit.middleCity(mm);
-        
+        int c = 7;
+        //cit.g(exported);
+        Structs.Mesh mmm = cit.buildsmth(exported, c);
+
+        System.out.println(exported.getPolygons(2).getNeighborIdxsList());
+
         new MeshFactory().write(mmm, config.output());
         
     }
