@@ -101,8 +101,9 @@ public class Main {
         cit.cities(exported, 3);
         cit.starBuilding(exported, 3);
         Structs.Mesh mm = cit.buildsmth(exported, cit.starBuilding(exported, 8));
+        Structs.Mesh mmm = cit.middleCity(mm);
         
-        new MeshFactory().write(mm, config.output());
+        new MeshFactory().write(mmm, config.output());
         
     }
 }
