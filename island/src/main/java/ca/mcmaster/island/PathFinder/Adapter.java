@@ -22,7 +22,6 @@ public class Adapter {
 
     private Graph convertMeshToGraph() {
         
-        // Add centroids as nodes
         for (int i = 0; i < mesh.getPolygonsCount(); i++) {    
             
             Structs.Vertex centroid = mesh.getVertices(mesh.getPolygons(i).getCentroidIdx());
@@ -33,7 +32,6 @@ public class Adapter {
             this.graph.addNode(node);
         }
 
-        // Add connections between neighboring centroids as edges
         int edgeId = 0;
         for (Node n : graph.getNodes()) {
             
@@ -50,13 +48,4 @@ public class Adapter {
         return graph;
     }
 
-    private int neighborPoly(Structs.Mesh m, int num){
-        for (int i = 0; i < m.getPolygonsCount(); i++){
-            Structs.Polygon p = m.getPolygons(i);
-            if(p.getCentroidIdx() == num){
-                return i;
-            }
-        }
-        return -1;
-    }
 }

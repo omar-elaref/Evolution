@@ -91,7 +91,7 @@ public class CityBuilder {
     }
 
 
-    public Structs.Mesh buildsmth(Structs.Mesh m, int numCities, List<Integer> cities){
+    public Structs.Mesh buildPath(Structs.Mesh m, List<Integer> cities){
         
         List<Edge> edges = pathFinderList(cities, m);
 

@@ -100,11 +100,11 @@ public class Main {
 
        
         CityBuilder cit = new CityBuilder();
-        int c = 7;
+        int c = 1;
         
         List<Integer> b = cit.cities(exported, c);
         
-        Structs.Mesh mmm = cit.buildsmth(exported, c, b);
+        Structs.Mesh mmm = cit.buildPath(exported, b);
         Structs.Mesh mm = cit.cityVertices(mmm, b);
 
         new MeshFactory().write(mm, config.output());
