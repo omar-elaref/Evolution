@@ -10,6 +10,7 @@ import java.awt.Color;
 import ca.mcmaster.cas.se2aa4.a2.io.Structs;
 import ca.mcmaster.cas.se2aa4.a2.io.Structs.Property;
 import ca.mcmaster.cas.se2aa4.a2.io.Structs.Segment;
+import ca.mcmaster.cas.se2aa4.a2.io.Structs.Vertex;
 import ca.mcmaster.island.MeshSize;
 import ca.mcmaster.island.distance;
 import ca.mcmaster.island.Tiles.lakeTile;
@@ -24,6 +25,7 @@ import ca.mcmaster.pathfinder.SimpleAttribute;
 
 public class CityBuilder {
     private Graph bigGraph;
+    
 
     public List<Integer> cities(Structs.Mesh m, int numCities){
 
@@ -46,14 +48,16 @@ public class CityBuilder {
         Random rand = new Random();    
 
         
-        Node central = graph.getNode(0);
-        central.addAttribute(new SimpleAttribute("type", true));
+        Node central = graph.getNode(neighborPoly(m, cities.get(0)));
+        central.addAttribute(new SimpleAttribute("type", "central"));
         central.addAttribute(new SimpleAttribute("CitySize", CitySize.CAPITAL_CITY));
+        central.addAttribute(new SimpleAttribute("index", cities.get(0)));
         nodeList.add(central);
 
         for(int i = 1; i < cities.size(); i++){
-            Node node = graph.getNode(i);
-            node.addAttribute(new SimpleAttribute("type", false));
+            Node node = graph.getNode(cities.get(i));
+            node.addAttribute(new SimpleAttribute("type", "notCentral"));
+            node.addAttribute(new SimpleAttribute("index", cities.get(i)));
 
             CitySize size;
             do {
@@ -64,9 +68,34 @@ public class CityBuilder {
 
             nodeList.add(node);
         }
-        this.bigGraph = graph;
         return nodeList;
     }
+
+    public Structs.Mesh cityVertices(Structs.Mesh m, List<Integer> cities){
+        List<Structs.Vertex> verts = new ArrayList<>();
+        Property centralVert = Property.newBuilder().setKey("citySize").setValue(String.valueOf(CitySize.CAPITAL_CITY)).build();
+        Structs.Vertex v = Vertex.newBuilder(m.getVertices(cities.get(0))).addProperties(centralVert).build();
+        verts.add(v);
+
+        for (int i = 1; i < cities.size(); i++){
+            Random rand = new Random();
+            CitySize size;
+            do {
+                size = CitySize.values()[rand.nextInt(CitySize.values().length)];
+            } while (size == CitySize.CAPITAL_CITY);
+            Property cityVert = Property.newBuilder().setKey("citySize").setValue(String.valueOf(size)).build();
+            Structs.Vertex vert = Vertex.newBuilder(m.getVertices(cities.get(i))).addProperties(cityVert).build();
+            verts.add(vert);
+        }
+
+        List<Structs.Vertex> listOfVert = new ArrayList<>(m.getVerticesList());
+        listOfVert.addAll(verts);
+        
+        Structs.Mesh newMesh = Structs.Mesh.newBuilder(m).clearVertices().addAllVertices(listOfVert).build();
+        return newMesh;
+    }
+
+
 
     private List<Edge> pathFinderList(List<Integer> cities, Structs.Mesh m){
         Adapter adapter = new Adapter(m);
@@ -110,9 +139,9 @@ public class CityBuilder {
         }
     }
 
-    public Structs.Mesh buildsmth(Structs.Mesh m, int numCities){
+    public Structs.Mesh buildsmth(Structs.Mesh m, int numCities, List<Integer> cities){
         
-        List<Edge> edges = pathFinderList(cities(m, numCities), m);
+        List<Edge> edges = pathFinderList(cities, m);
 
         List<Structs.Segment> segments = new ArrayList<>();
         

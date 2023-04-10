@@ -15,6 +15,7 @@ import ca.mcmaster.pathfinder.Graph;
 import ca.mcmaster.cas.se2aa4.a2.io.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 
 import ca.mcmaster.island.colorMesh;
@@ -100,12 +101,15 @@ public class Main {
        
         CityBuilder cit = new CityBuilder();
         int c = 7;
+        
+        List<Integer> b = cit.cities(exported, c);
         //cit.g(exported);
-        Structs.Mesh mmm = cit.buildsmth(exported, c);
-
+        Structs.Mesh mmm = cit.buildsmth(exported, c, b);
+        Structs.Mesh mm = cit.cityVertices(mmm, b);
+        
         System.out.println(exported.getPolygons(2).getNeighborIdxsList());
 
-        new MeshFactory().write(mmm, config.output());
+        new MeshFactory().write(mm, config.output());
         
     }
 }
