@@ -26,11 +26,7 @@ public class Main {
         }    
 
         Graph graph = builder.starBuilder(nodes);
-        for (Edge e : graph.getEdges()){
-            System.out.println(e.getSource().getId() + " " + e.getDestination().getId());
-        }
  
-        
-          
+    
     }
 }
