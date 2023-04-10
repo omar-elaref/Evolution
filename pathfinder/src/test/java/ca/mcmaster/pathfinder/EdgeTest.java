@@ -45,6 +45,17 @@ public class EdgeTest {
 
         edge.addAttribute(new SimpleAttribute("name", "edge " + edge.getId()));
 
+        assertNotEquals(edge.getAttribute("name"), "edge 1");
+    }
+
+    @Test
+    public void attributeTesting2(){
+        Node node1 = new Node(0);
+        Node node2 = new Node(1);
+        Edge edge = new Edge(0, node2, node1);
+
+        edge.addAttribute(new SimpleAttribute("name", "edge " + edge.getId()));
+
         assertEquals(edge.getAttribute("name"), "edge 0");
     }
     
