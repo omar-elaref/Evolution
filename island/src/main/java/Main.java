@@ -99,15 +99,15 @@ public class Main {
         }
 
        
-        CityBuilder cit = new CityBuilder();
-        int c = 1;
+        CityBuilder city = new CityBuilder();
+        int numCities = Integer.parseInt(config.getCities());
         
-        List<Integer> b = cit.cities(exported, c);
+        List<Integer> cityList = city.cities(exported, numCities);
         
-        Structs.Mesh mmm = cit.buildPath(exported, b);
-        Structs.Mesh mm = cit.cityVertices(mmm, b);
+        Structs.Mesh pathMesh = city.buildPath(exported, cityList);
+        Structs.Mesh cityMesh = city.cityVertices(pathMesh, cityList);
 
-        new MeshFactory().write(mm, config.output());
+        new MeshFactory().write(cityMesh, config.output());
         
     }
 }

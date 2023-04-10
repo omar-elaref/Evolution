@@ -16,6 +16,8 @@ public class Configuration {
     public static final String RIVERNUMBER = "numOfRivers";
     public static final String BEACHWIDTH = "beachWidth";
     public static final String SEED = "seed";
+    public static final String NUMCITIES = "numOfCities";
+
 
     private CommandLine cli;
 
@@ -79,6 +81,10 @@ public class Configuration {
         return this.cli.hasOption(SEED);
     }
 
+    public String getCities(){
+        return this.cli.getOptionValue(NUMCITIES,"1");
+    }
+
     private Options options() {
         Options options = new Options();
         options.addOption(new Option(INPUT, true, "Input file (SVG)"));
@@ -96,6 +102,8 @@ public class Configuration {
         options.addOption(new Option(BEACHWIDTH, true, "input the thickness of the beaches"));
         options.addOption(new Option(SHAPE, "shape", true, "Shape of Island, enter \"cirlce\", \"ellipse\", \"star\" or \"random\""));
         options.addOption(new Option(SEED, "seed", true, "Seed for Island Generation"));
+        options.addOption(new Option(NUMCITIES, true, "Number of cities"));
+
 
         return options;
     }
