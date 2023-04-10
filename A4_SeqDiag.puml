@@ -1,0 +1,57 @@
+@startuml
+participant Main 
+participant Configuration
+participant IslandGenerator
+participant ShapeGenerator
+participant elevation
+participant whittakerGen
+participant MakeRiver
+participant LakeGen
+participant CircleAquifier
+participant Adapter
+participant CityPicker
+participant CityBuilder
+
+activate Main
+Main -> Configuration ++ : Configuration.shape()
+Configuration -> Main -- : return shape
+Main -> Configuration ++ : Configuration.getAltitude()
+Configuration -> Main -- : return elevation
+Main -> Configuration ++ : Configuration.getAquifer()
+Configuration -> Main -- : return aquiferNum
+Main -> Configuration ++ : Configuration.getRiver()
+Configuration -> Main -- : return riverNum
+Main -> Configuration ++ : Configuration.getLake()
+Configuration -> Main -- : return numLakes
+Main -> ShapeGenerator : ShapeGenerator.generateShape()
+Main -> IslandGenerator ++: IslandGenerator.basic() or IslandGenerator.lagoon()
+IslandGenerator -> Configuration ++ : config.hasSeed()
+Configuration -> IslandGenerator -- : return hasSeed
+IslandGenerator -> LakeGen : LakeGen()
+loop
+    IslandGenerator -> elevation ++ : elevation.getElevation()
+    IslandGenerator <- elevation -- : elevation.tileElevation()
+end
+IslandGenerator -> Configuration ++ : config.hasSeed()
+Configuration -> IslandGenerator -- : return hasSeed
+IslandGenerator -> MakeRiver : MakeRiver()
+IslandGenerator -> MakeRiver ++ : RiverGen()
+MakeRiver -> IslandGenerator -- : return Mesh1
+IslandGenerator -> CircleAquifier ++ : meshWithAquifers()
+CircleAquifier -> IslandGenerator -- : return Mesh2
+IslandGenerator -> LakeGen ++ : meshWithLakes()
+LakeGen -> IslandGenerator -- : return Mesh3
+IslandGenerator -> whittakerGen ++ : biomeGen()
+whittakerGen -> IslandGenerator -- : return finalMesh
+IslandGenerator -> Main -- : return finalMesh
+
+Main -> CityBuilder ++ : config.getCities()
+CityBuilder -> Adapter ++ : Adapter(mesh)
+Adapter -> CityBuilder -- : return graph
+CityBuilder -> CityPicker ++ : CityPicker.picker(numOfCities)
+CityPicker -> CityBuilder -- : return List<Vertex>
+CityBuilder -> Main : return mesh
+
+
+deactivate Main
+@enduml

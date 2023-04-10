@@ -13,7 +13,7 @@ import ca.mcmaster.pathfinder.DijkstraPathFinder;
 import ca.mcmaster.pathfinder.Edge;
 import ca.mcmaster.pathfinder.Graph;
 
-public class CityBuilder {
+public class CityBuilder implements pathFindingList{
     private Graph bigGraph;
     
 
@@ -57,8 +57,8 @@ public class CityBuilder {
     }
 
 
-
-    private List<Edge> pathFinderList(List<Integer> cities, Structs.Mesh m){
+    @Override
+    public List<Edge> pathFinderList(List<Integer> cities, Structs.Mesh m){
         Adapter adapter = new Adapter(m);
         this.bigGraph = adapter.graph;
         List<Edge> edges = new ArrayList<>();
