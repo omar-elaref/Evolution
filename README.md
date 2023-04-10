@@ -141,3 +141,10 @@ Add conditions for the feature have been met.
 
 
 ### A4 Description
+
+Most of the description for this project is in the pathfinder folder. There is another README file there.
+
+#### Running the number of cities
+
+Number of Cities:
+    input `-numOfCities` sets the number of cities the user wants (for example `2`, `3`, `100`, `50`)
